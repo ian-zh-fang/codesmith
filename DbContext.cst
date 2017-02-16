@@ -1,0 +1,49 @@
+﻿<%@ Template Language="C#" TargetLanguage="C#"  Debug="True"%>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Property Name="NameSpace" Type="String" %>
+<%@ Property Name="ClassName" Type="String" Default="DbContext" %>
+<%@ Property Name="BaseClass" Type="String" Default="System.Data.Entity.DbContext" %>
+<%@ Property Name="TypeItems" Type="Dictionary<String, SchemaExplorer.TableSchema>" %>
+<%@ Property Name="Owner" Type="String" %>
+<%@ Property Category="Entity" Name="EntityNameSpace" Type="String" %>
+
+namespace <%=this.NameSpace %>
+{
+    using System.Data.Entity;
+    using <%=this.EntityNameSpace%>;
+
+    public class <%=this.ClassName %>:<%=this.BaseClass %>
+    {
+        private readonly string Owner = string.Empty;
+    
+        public <%=this.ClassName %>(string connectionStringName, string owner="<%=this.Owner%>")
+            :base($"name={connectionStringName}")
+        {
+            Owner = owner;
+        }
+        
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema($"{Owner.ToUpper()}");
+        <%
+        foreach(var keyval in this.TypeItems)
+        {%>
+            modelBuilder.Entity<<%=keyval.Key%>>().ToTable("<%=keyval.Value.Name%>");
+        <%
+        }
+        %>
+        }
+        
+    <%
+    foreach(var keyval in this.TypeItems)
+    {%>
+        public virtual DbSet<<%=keyval.Key%>> <%=keyval.Key%>Items { get; set; }
+    <%
+    }
+    %>
+    }
+}
+<script runat="template"></script>

@@ -1,0 +1,76 @@
+﻿<%@ Template Language="C#" TargetLanguage="C#"  Debug="True"%>
+<%@ Assembly Name="SchemaExplorer"%>
+<%@ Import Namespace="System.Linq" %>
+<%@ Import Namespace="SchemaExplorer"%>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema"%>
+<%@ Property Name="NameSpace" Type="String" Default="cn.tdr.data.entity"%>
+<%@ Property Name="BaseClass" Type="String" Default="" %>
+<%@ Property Name="ClassName" Type="String" %>
+<%@ Property Name="IgnoreFields" Type="String[]" %>
+
+namespace <%=this.NameSpace %>
+{
+    /// <summary>
+    /// <%=this.SourceTable.Description %>
+    /// </summary>
+    public class <%=this.ClassName%><%=":"%><%=this.BaseClass %>                                                                                                                                         
+    {
+         <%foreach(ColumnSchema column in this.SourceTable.Columns)%><%{%>
+         <%
+             if(this.IgnoreFields.Any(t => t == column.Name))
+             {
+                 continue;
+             }
+         %>
+         
+        /// <summary>
+        /// <%=column.Description %>
+        /// </summary>
+        public <%=GetCSDataType(column)%> <%=ToPascal(column.Name)%>{ get; set; }
+        <%}%>
+    }
+}
+<script runat="template">
+    //Pascal命名法（将首字母大写）
+    public string ToPascal(string s)
+    {
+        return s.Substring(0,1).ToUpper()+s.Substring(1);
+    }
+
+    //得到C#的数据类型（将基本常用的数据类型意逐个转换）
+    public static string GetCSDataType(ColumnSchema column)
+    {
+        if (column.Name.EndsWith("TypeCode")) return column.Name;
+        switch (column.DataType)
+        {
+            case DbType.AnsiString: return "string";
+            case DbType.AnsiStringFixedLength: return "string";
+            case DbType.Binary: return "byte[]";
+            case DbType.Boolean: return "bool";
+            case DbType.Byte: return "byte";
+            case DbType.Currency: return "decimal";
+            case DbType.Date: return "DateTime";
+            case DbType.DateTime: return "DateTime";
+            case DbType.Decimal: return "decimal";
+            case DbType.Double: return "double";
+            case DbType.Guid: return "Guid";
+            case DbType.Int16: return "short";
+            case DbType.Int32: return "int";
+            case DbType.Int64: return "long";
+            case DbType.Object: return "object";
+            case DbType.SByte: return "sbyte";
+            case DbType.Single: return "float";
+            case DbType.String: return "string";
+            case DbType.StringFixedLength: return "string";
+            case DbType.Time: return "TimeSpan";
+            case DbType.UInt16: return "ushort";
+            case DbType.UInt32: return "uint";
+            case DbType.UInt64: return "ulong";
+            case DbType.VarNumeric: return "decimal";
+            default:
+                {
+                    return "__UNKNOWN__" + column.NativeType;
+                }
+        }
+    }
+</script>

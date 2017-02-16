@@ -1,0 +1,51 @@
+﻿<%@ Template Language="C#" TargetLanguage="Text"  Debug="True" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="System.Linq" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Register Name="EntityTemplateClass" Template="Entity.cst" %>
+<%@ Register Name="DbContextTemplateClass" Template="DbContext.cst" %>
+<%@ Property Name="SourceDB" Type="SchemaExplorer.DatabaseSchema" %>
+<%@ Property Name="NameSpace" Type="String" %>
+<%@ Property Name="BaseClass" Type="String" %>
+<%@ Property Name="IgnoreFields" Type="String" Default="Id,IsDel" %>
+<%@ Property Name="FileDictionary" Type="String" Optional="True" Editor="System.Windows.Forms.Design.FolderNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" %>
+<%@ Property Category="DbContext" Name="DbContextNameSpace" Type="String" Default="cn.tdr.data.repository"%>
+<%@ Property Category="DbContext" Name="DbContextClassName" Type="String" Default="DbContext" %>
+<%@ Property Category="DbContext" Name="DbContextBaseClass" Type="String" Default="System.Data.Entity.DbContext" %>
+<%
+
+Dictionary<String, SchemaExplorer.TableSchema> dic = new Dictionary<String, SchemaExplorer.TableSchema>();
+string owner = null;
+foreach(var table in this.SourceDB.Tables)
+{   
+    if(string.IsNullOrWhiteSpace(owner))
+    {
+        owner = table.Owner;
+    }
+    
+    string[] clsnamearr = table.Name.Split('_');
+    string clsname = clsnamearr.Last();
+    dic.Add(clsname, table);
+    
+    EntityTemplateClass etc = new EntityTemplateClass();
+    etc.BaseClass = this.BaseClass;
+    etc.ClassName = clsname;
+    etc.NameSpace = this.NameSpace;
+    etc.SourceTable = table;
+    etc.IgnoreFields = this.IgnoreFields.Split(',');
+    etc.RenderToFile(this.FileDictionary+"\\"+clsname+".cs", true);    
+}
+//System.Diagnostics.Debugger.Launch();  
+//System.Diagnostics.Debugger.Break(); 
+DbContextTemplateClass dtc = new DbContextTemplateClass();
+dtc.BaseClass = this.DbContextBaseClass;
+dtc.ClassName = this.DbContextClassName;
+dtc.NameSpace = this.DbContextNameSpace;
+dtc.EntityNameSpace = this.NameSpace;
+dtc.TypeItems = dic;
+dtc.Owner = owner;
+dtc.RenderToFile(this.FileDictionary+"\\"+this.DbContextClassName+".cs", true);
+
+%>
+<script runat="template"></script>

@@ -5,9 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F05FB984-96DA-45C0-B303-FDC94D281FCD}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\..\Users\zh.fang\Documents\CodeSmith Generator\Templates\DbContext.cst = ..\..\..\..\..\Users\zh.fang\Documents\CodeSmith Generator\Templates\DbContext.cst
-		..\..\..\..\..\Users\zh.fang\Documents\CodeSmith Generator\Templates\Entity.cst = ..\..\..\..\..\Users\zh.fang\Documents\CodeSmith Generator\Templates\Entity.cst
-		..\..\..\..\..\Users\zh.fang\Documents\CodeSmith Generator\Templates\EntityBat.cst = ..\..\..\..\..\Users\zh.fang\Documents\CodeSmith Generator\Templates\EntityBat.cst
+		DbContext.cst = DbContext.cst
+		Entity.cst = Entity.cst
+		EntityBat.cst = EntityBat.cst
 	EndProjectSection
 EndProject
 Global
